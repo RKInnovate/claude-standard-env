@@ -8,17 +8,39 @@ This is a **Claude Code Skills repository** containing domain-specific skill def
 
 ### Skills Structure
 
-The repository is organized into four domain-focused skills:
+The repository contains skills organized in the `skills/` directory with four domain-focused skills:
 
-- **`architecture/`**: System architecture, cloud infrastructure (GCP), separation of concerns, end-to-end testing
-- **`backend/`**: REST APIs, authentication, data modeling, security patterns, testing responsibilities
-- **`frontend/`**: Cupertino (Apple HIG) design system, three-panel layouts, UI/UX patterns
-- **`coding-guidelines/`**: Code quality, error handling, typing, state management, commit/PR readiness
+- **`skills/architecture/`**: System architecture, cloud infrastructure (GCP), separation of concerns, end-to-end testing
+- **`skills/backend/`**: REST APIs, authentication, data modeling, security patterns, testing responsibilities
+- **`skills/frontend/`**: Cupertino (Apple HIG) design system, three-panel layouts, UI/UX patterns
+- **`skills/coding-guidelines/`**: Code quality, error handling, typing, state management, commit/PR readiness
 
 Each skill directory contains a `SKILL.md` file with YAML frontmatter defining:
 - The skill's name and description
 - Domain-specific rules and constraints
 - When the skill should be invoked
+
+### Installation
+
+To install these skills and settings to your local Claude Code environment, run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-skills/main/setup.sh | bash
+```
+
+Or clone the repository and run the setup script locally:
+
+```bash
+git clone https://github.com/RKInnovate/claude-skills.git
+cd claude-skills
+./setup.sh
+```
+
+The setup script will:
+- Install skills to `~/.claude/skills/`
+- Replace existing skills if already present
+- Preserve other skills not in this repository
+- Install `settings.json` to `~/.claude/settings.json` (with backup of existing file)
 
 ## Commit Message Requirements
 
