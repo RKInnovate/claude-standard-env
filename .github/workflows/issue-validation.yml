@@ -1,0 +1,350 @@
+name: "Issue validation"
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  validate_issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            /**
+             * This workflow validates that issues follow organization standards:
+             * 1. Issues should be created using one of the provided templates
+             * 2. Required fields should be filled out completely
+             * 3. Issue title should be descriptive
+             * 4. Issue should have appropriate labels
+             *
+             * If validation fails, the issue is labeled as "invalid" or "needs-review"
+             * and a comment is posted explaining what's wrong.
+             */
+
+            const issue = context.payload.issue;
+            const issueNumber = issue.number;
+            const issueTitle = issue.title || '';
+            const issueBody = issue.body || '';
+            const issueLabels = issue.labels.map(label => label.name);
+
+            console.log(`Validating issue #${issueNumber}: ${issueTitle}`);
+
+            const errors = [];
+            const warnings = [];
+            const passed = [];
+
+            // ============================================
+            // 1. Validate Issue Was Created from Template
+            // ============================================
+            const validTemplateLabels = ['bug', 'feature', 'security', 'support', 'enhancement'];
+            const hasTemplateLabel = issueLabels.some(label => validTemplateLabels.includes(label));
+
+            if (!hasTemplateLabel && !issueBody.includes('###') && !issueBody.includes('##')) {
+              errors.push({
+                type: 'template',
+                message: 'Issue does not appear to use a template',
+                details: 'Please create issues using one of the provided templates:\n- 🐞 Bug report\n- ✨ Feature request\n- 🔒 Security report\n- ❓ Support question'
+              });
+            } else {
+              passed.push('✅ Issue appears to use a template or has structured content');
+            }
+
+            // ============================================
+            // 2. Validate Issue Title
+            // ============================================
+            // Check for placeholder text
+            const placeholders = ['[BUG]', '[FEATURE]', '[SECURITY]', '[SUPPORT]'];
+            const hasOnlyPlaceholder = placeholders.some(ph => issueTitle.trim() === ph);
+
+            if (hasOnlyPlaceholder) {
+              errors.push({
+                type: 'title',
+                message: 'Issue title is just a placeholder',
+                details: 'Please provide a descriptive title that summarizes the issue'
+              });
+            } else if (issueTitle.length < 10) {
+              errors.push({
+                type: 'title',
+                message: 'Issue title is too short',
+                details: `Title length: ${issueTitle.length} characters (minimum: 10)`
+              });
+            } else if (issueTitle.length > 150) {
+              warnings.push({
+                type: 'title',
+                message: 'Issue title is very long',
+                details: `Title length: ${issueTitle.length} characters (recommended: ≤ 150)`
+              });
+            } else {
+              passed.push('✅ Issue title is descriptive');
+            }
+
+            // ============================================
+            // 3. Validate Required Fields Are Filled
+            // ============================================
+            const bodyLowerCase = issueBody.toLowerCase();
+
+            // Check for common placeholder text that indicates incomplete forms
+            const incompletePhrases = [
+              'describe the bug',
+              'provide a description',
+              'steps to reproduce',
+              'what you expected',
+              'add screenshots',
+              'e.g.',
+              'paste logs',
+              'additional context'
+            ];
+
+            let incompleteFieldsCount = 0;
+            incompletePhrases.forEach(phrase => {
+              // Check if the phrase appears but the section after it is empty or very short
+              const regex = new RegExp(`${phrase}[\\s\\S]{0,30}(###|##|$)`, 'i');
+              if (regex.test(issueBody)) {
+                incompleteFieldsCount++;
+              }
+            });
+
+            if (incompleteFieldsCount >= 3) {
+              warnings.push({
+                type: 'body',
+                message: 'Some template fields may be incomplete',
+                details: 'Please ensure all required fields are filled out with meaningful information'
+              });
+            }
+
+            // Check body length
+            if (issueBody.length < 50) {
+              errors.push({
+                type: 'body',
+                message: 'Issue body is too short',
+                details: 'Please provide detailed information about the issue'
+              });
+            } else {
+              passed.push('✅ Issue body has sufficient detail');
+            }
+
+            // ============================================
+            // 4. Validate Bug Report Specifics
+            // ============================================
+            if (issueLabels.includes('bug') || issueTitle.toLowerCase().includes('[bug]')) {
+              const hasStepsToReproduce = /steps to reproduce|reproduce|how to reproduce/i.test(issueBody);
+              const hasExpectedBehavior = /expected behavior|expected|should/i.test(issueBody);
+              const hasActualBehavior = /actual behavior|actual|what happened/i.test(issueBody);
+
+              if (!hasStepsToReproduce) {
+                warnings.push({
+                  type: 'bug-report',
+                  message: 'Bug report may be missing steps to reproduce',
+                  details: 'Bug reports should include clear steps to reproduce the issue'
+                });
+              } else {
+                passed.push('✅ Includes steps to reproduce');
+              }
+
+              if (!hasExpectedBehavior) {
+                warnings.push({
+                  type: 'bug-report',
+                  message: 'Bug report may be missing expected behavior',
+                  details: 'Bug reports should describe what you expected to happen'
+                });
+              }
+
+              if (!hasActualBehavior) {
+                warnings.push({
+                  type: 'bug-report',
+                  message: 'Bug report may be missing actual behavior',
+                  details: 'Bug reports should describe what actually happened'
+                });
+              }
+            }
+
+            // ============================================
+            // 5. Validate Feature Request Specifics
+            // ============================================
+            if (issueLabels.includes('feature') || issueLabels.includes('enhancement') || issueTitle.toLowerCase().includes('[feature]')) {
+              const hasUseCaseOrProblem = /problem|use case|motivation|why|business value/i.test(issueBody);
+              const hasSolution = /solution|proposal|suggest|implement/i.test(issueBody);
+
+              if (!hasUseCaseOrProblem) {
+                warnings.push({
+                  type: 'feature-request',
+                  message: 'Feature request may be missing problem/use case',
+                  details: 'Feature requests should explain the problem or use case being addressed'
+                });
+              } else {
+                passed.push('✅ Describes problem/use case');
+              }
+
+              if (!hasSolution) {
+                warnings.push({
+                  type: 'feature-request',
+                  message: 'Feature request may be missing proposed solution',
+                  details: 'Feature requests should include a proposed solution or implementation approach'
+                });
+              }
+            }
+
+            // ============================================
+            // 6. Generate Report
+            // ============================================
+            const hasErrors = errors.length > 0;
+            const hasWarnings = warnings.length > 0;
+
+            let commentBody = '## 🤖 Issue Validation Report\n\n';
+
+            // Summary table
+            const totalChecks = errors.length + warnings.length + passed.length;
+            const statusEmoji = hasErrors ? '❌' : (hasWarnings ? '⚠️' : '✅');
+            const statusText = hasErrors ? 'Needs attention' : (hasWarnings ? 'Could be improved' : 'Looks good');
+
+            commentBody += '### Summary\n\n';
+            commentBody += '| Status | Total Checks | Errors | Warnings | Passed |\n';
+            commentBody += '|--------|--------------|--------|----------|--------|\n';
+            commentBody += `| ${statusEmoji} **${statusText}** | ${totalChecks} | ${errors.length} | ${warnings.length} | ${passed.length} |\n\n`;
+
+            // Detailed results
+            if (errors.length > 0 || warnings.length > 0 || passed.length > 0) {
+              commentBody += '### Detailed Results\n\n';
+              commentBody += '| Status | Check | Details |\n';
+              commentBody += '|--------|-------|----------|\n';
+
+              errors.forEach(error => {
+                const details = error.details.replace(/\n/g, '<br>');
+                commentBody += `| ❌ | **${error.message}** | ${details} |\n`;
+              });
+
+              warnings.forEach(warning => {
+                const details = warning.details.replace(/\n/g, '<br>');
+                commentBody += `| ⚠️ | **${warning.message}** | ${details} |\n`;
+              });
+
+              passed.forEach(check => {
+                const checkText = check.replace('✅ ', '');
+                commentBody += `| ✅ | ${checkText} | — |\n`;
+              });
+
+              commentBody += '\n';
+            }
+
+            commentBody += '---\n\n';
+
+            if (hasErrors) {
+              commentBody += '### 📋 Next Steps\n\n';
+              commentBody += '1. ✏️ Update your issue to address the errors above\n';
+              commentBody += '2. 🔄 The validation will automatically re-run when you edit the issue\n\n';
+            } else if (hasWarnings) {
+              commentBody += '💡 **Tip:** Consider addressing the warnings above to help maintainers understand and triage your issue faster.\n\n';
+            }
+
+            commentBody += '<sub>This check validates that issues follow the organization\'s quality standards.</sub>';
+
+            // ============================================
+            // 7. Label the Issue
+            // ============================================
+            if (hasErrors) {
+              // Add "invalid" label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                labels: ['invalid']
+              });
+              console.log('Added "invalid" label to issue');
+            } else if (hasWarnings) {
+              // Add "needs-review" label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                labels: ['needs-review']
+              });
+              console.log('Added "needs-review" label to issue');
+            } else {
+              // Remove validation labels if issue is now valid
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  name: 'invalid'
+                });
+                console.log('Removed "invalid" label');
+              } catch (error) {
+                // Label might not exist, ignore
+              }
+
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  name: 'needs-review'
+                });
+                console.log('Removed "needs-review" label');
+              } catch (error) {
+                // Label might not exist, ignore
+              }
+            }
+
+            // ============================================
+            // 8. Post/Update Comment
+            // ============================================
+            const botCommentIdentifier = '<!-- issue-validation-bot -->';
+            commentBody = botCommentIdentifier + '\n\n' + commentBody;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+
+            const existingComment = comments.find(comment =>
+              comment.body && comment.body.includes(botCommentIdentifier)
+            );
+
+            // Only post comment if there are errors or warnings
+            if (hasErrors || hasWarnings) {
+              if (existingComment) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id,
+                  body: commentBody
+                });
+                console.log('Updated existing validation comment');
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  body: commentBody
+                });
+                console.log('Posted new validation comment');
+              }
+            } else {
+              // Issue is valid, delete comment if it exists
+              if (existingComment) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existingComment.id
+                });
+                console.log('Deleted validation comment - issue is now valid');
+              }
+            }
+
+            // ============================================
+            // 9. Set Check Status
+            // ============================================
+            if (hasErrors) {
+              console.log('⚠️ Issue has validation errors');
+            } else if (hasWarnings) {
+              console.log('⚠️ Issue has validation warnings');
+            } else {
+              console.log('✅ Issue validation passed!');
+            }
