@@ -9,10 +9,13 @@
 #   curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
 #
 # Features:
+# - Checks if Claude Code CLI is installed (offers to install if missing)
 # - Installs skills to ~/.claude/skills/
 # - Replaces existing skills if already present
 # - Preserves other skills not in this repository
 # - Installs settings.json to ~/.claude/settings.json
+# - Installs global CLAUDE.md to ~/.claude/CLAUDE.md
+# - Configures API key helper at ~/.claude/anthropic_key.sh
 # - Creates necessary directories if they don't exist
 #
 
@@ -76,6 +79,67 @@ check_git() {
     if ! command -v git &> /dev/null; then
         print_error "git is not installed. Please install git and try again."
         exit 1
+    fi
+}
+
+# Check if Claude Code CLI is installed
+check_claude() {
+    if ! command -v claude &> /dev/null; then
+        print_warning "Claude Code CLI is not installed."
+        echo ""
+        echo "Claude Code CLI is required to use the Claude Standard Environment."
+        echo "Would you like to install it now?"
+        echo ""
+        read -r -p "Install Claude Code CLI? [Y/n] " response
+        echo ""
+
+        # Default to yes if empty response
+        response=${response:-Y}
+
+        case "$response" in
+            [yY][eE][sS]|[yY])
+                print_info "Installing Claude Code CLI..."
+                if curl -fsSL https://claude.ai/install.sh | bash; then
+                    print_success "Claude Code CLI installed successfully!"
+                    echo ""
+
+                    # Try to source shell profile to make claude available in current session
+                    print_info "Attempting to load Claude CLI in current session..."
+                    if [ -f "$HOME/.bashrc" ]; then
+                        source "$HOME/.bashrc" 2>/dev/null || true
+                    fi
+                    if [ -f "$HOME/.zshrc" ]; then
+                        source "$HOME/.zshrc" 2>/dev/null || true
+                    fi
+                    if [ -f "$HOME/.profile" ]; then
+                        source "$HOME/.profile" 2>/dev/null || true
+                    fi
+
+                    # Check if claude is now available
+                    if command -v claude &> /dev/null; then
+                        print_success "Claude CLI is now available. Continuing with setup..."
+                        echo ""
+                    else
+                        print_warning "Claude CLI installed but not available in current session."
+                        print_info "Please restart your terminal and run this setup script again."
+                        echo ""
+                        exit 0
+                    fi
+                else
+                    print_error "Failed to install Claude Code CLI."
+                    exit 1
+                fi
+                ;;
+            *)
+                print_error "Claude Code CLI is required. Please install it manually:"
+                echo ""
+                echo "  curl -fsSL https://claude.ai/install.sh | bash"
+                echo ""
+                exit 1
+                ;;
+        esac
+    else
+        print_success "Claude Code CLI is installed"
     fi
 }
 
@@ -310,6 +374,7 @@ main() {
 
     # Check prerequisites
     check_git
+    check_claude
 
     # Create directories
     create_directories

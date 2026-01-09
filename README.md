@@ -27,9 +27,10 @@ cd claude-standard-env
 ./setup.sh
 ```
 
-**During installation**, you'll be prompted to enter your Anthropic API key. You can:
-- Enter your API key for immediate setup
-- Press Enter to skip and configure later
+**During installation**:
+- The setup script will check if Claude Code CLI is installed
+- If not found, you'll be prompted to install it automatically
+- You'll be prompted to enter your Anthropic API key (or skip for later)
 
 Get your API key from: https://console.anthropic.com/settings/keys
 
@@ -58,6 +59,7 @@ Get your API key from: https://console.anthropic.com/settings/keys
   - Get your API key from: https://console.anthropic.com/settings/keys
 
 The installer will:
+- Check if Claude Code CLI is installed (offer to install if missing)
 - Create necessary directories if they don't exist
 - Replace existing skills if already present
 - Preserve other skills not in this repository
