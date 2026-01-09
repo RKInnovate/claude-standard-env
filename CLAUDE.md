@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-This is a **Claude Code Skills repository** containing domain-specific skill definitions that guide Claude's behavior when writing code. Each skill enforces specific architectural patterns, design principles, and quality standards.
+This is the **Claude Standard Environment** - the single source of truth for Claude Code development environment configuration. It contains domain-specific skill definitions, workflow configurations, and quality standards that guide Claude's behavior when writing code. Each component enforces specific architectural patterns, design principles, and development best practices.
 
 ### Skills Structure
 
@@ -22,17 +22,17 @@ Each skill directory contains a `SKILL.md` file with YAML frontmatter defining:
 
 ### Installation
 
-To install these skills and settings to your local Claude Code environment, run:
+To install the complete Claude Standard Environment to your local Claude Code setup, run:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-skills/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
 ```
 
 Or clone the repository and run the setup script locally:
 
 ```bash
-git clone https://github.com/RKInnovate/claude-skills.git
-cd claude-skills
+git clone https://github.com/RKInnovate/claude-standard-env.git
+cd claude-standard-env
 ./setup.sh
 ```
 
@@ -41,6 +41,70 @@ The setup script will:
 - Replace existing skills if already present
 - Preserve other skills not in this repository
 - Install `settings.json` to `~/.claude/settings.json` (with backup of existing file)
+- Install global `CLAUDE.md` to `~/.claude/CLAUDE.md` (with backup of existing file)
+- Configure API key helper at `~/.claude/anthropic_key.sh`
+
+## Working with This Repository
+
+### Testing Setup Script Changes
+
+When modifying `setup.sh`, test installation to a temporary directory:
+
+```bash
+# Test installation without affecting your actual ~/.claude directory
+CLAUDE_DIR="/tmp/claude-test" ./setup.sh
+
+# Verify skills were installed correctly
+ls -la /tmp/claude-test/skills/
+
+# Verify settings were installed
+cat /tmp/claude-test/settings.json
+
+# Clean up test installation
+rm -rf /tmp/claude-test
+```
+
+### Validating Skill Definitions
+
+All `SKILL.md` files must include YAML frontmatter with:
+- `name`: Skill identifier (lowercase, matches directory name)
+- `description`: Brief description of when to use this skill
+
+Validate frontmatter is parseable:
+
+```bash
+# Check YAML frontmatter in all skills
+for skill in skills/*/SKILL.md; do
+  echo "Checking $skill..."
+  head -5 "$skill" | grep -E "^(name|description):" || echo "  ⚠️  Missing or invalid frontmatter"
+done
+```
+
+### Testing Commit Hook Locally
+
+Before committing, test that your commit message passes validation:
+
+```bash
+# Test a commit message format (from repo root)
+echo "feat: add new skill for testing" | .git/hooks/commit-msg /dev/stdin
+
+# Test with an invalid message (should fail)
+echo "invalid commit message" | .git/hooks/commit-msg /dev/stdin
+```
+
+### Testing GitHub Workflows Locally
+
+You cannot fully test GitHub Actions locally, but you can validate workflow syntax:
+
+```bash
+# Install act (GitHub Actions local runner) - optional
+# brew install act  # macOS
+# Then run workflows locally:
+# act pull_request
+
+# Or validate YAML syntax
+yamllint .github/workflows/*.yml
+```
 
 ## Commit Message Requirements
 

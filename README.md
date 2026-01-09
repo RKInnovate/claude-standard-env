@@ -1,6 +1,6 @@
-# Claude Code Skills
+# Claude Standard Environment
 
-A curated collection of domain-specific skills for [Claude Code](https://claude.ai/code) that enforce production-grade coding practices, architectural patterns, and quality standards.
+The **single source of truth** for [Claude Code](https://claude.ai/code) development environment configuration. A comprehensive collection of domain-specific skills, workflow configurations, and quality standards that enforce production-grade coding practices, architectural patterns, and development best practices.
 
 ## Overview
 
@@ -13,17 +13,17 @@ This repository contains four specialized skills that guide Claude's behavior wh
 
 ## Quick Install
 
-Install all skills and settings to your local Claude Code environment:
+Install the complete Claude Standard Environment to your local Claude Code setup:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-skills/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
 ```
 
 Or clone and run locally:
 
 ```bash
-git clone https://github.com/RKInnovate/claude-skills.git
-cd claude-skills
+git clone https://github.com/RKInnovate/claude-standard-env.git
+cd claude-standard-env
 ./setup.sh
 ```
 
@@ -108,7 +108,7 @@ Enforces production-grade coding practices, error handling, typing discipline, a
 
 ## Repository Standards
 
-This repository follows strict quality standards:
+The Claude Standard Environment enforces strict quality standards across all development work:
 
 ### Commit Messages
 
@@ -144,7 +144,7 @@ Automated validation via GitHub Actions provides detailed feedback.
 
 ## Package Managers
 
-This repository enforces specific package managers:
+The Claude Standard Environment enforces specific package managers:
 
 - **Python**: `uv` only
 - **Node.js**: `pnpm` only
@@ -153,9 +153,11 @@ Never use pip, poetry, npm, yarn, or alternatives.
 
 ## Documentation
 
-- **CLAUDE.md**: Comprehensive guide for Claude Code when working in this repository
+- **CLAUDE.md** (project-level): Comprehensive guide for Claude Code when working in this repository
+- **GLOBAL_CLAUDE.md**: Universal rules applied to all projects via `~/.claude/CLAUDE.md`
 - **SKILL.md files**: Individual skill definitions with domain-specific rules
 - **Workflow files**: GitHub Actions for validation and quality checks
+- **settings.json**: Claude Code configuration and plugin settings
 
 ## Contributing
 
@@ -166,6 +168,24 @@ When adding or modifying skills:
 3. Test the setup script works with your changes
 4. Follow commit message and PR requirements
 5. Run linters and tests before committing
+
+## Repository Structure
+
+```
+claude-standard-env/
+├── skills/                    # Domain-specific skill definitions
+│   ├── architecture/          # System architecture patterns
+│   ├── backend/              # Backend services and APIs
+│   ├── frontend/             # UI/UX design system
+│   └── coding-guidelines/    # Code quality standards
+├── .github/
+│   └── workflows/            # CI/CD validation workflows
+├── CLAUDE.md                 # Project-level Claude Code guidance
+├── GLOBAL_CLAUDE.md          # Universal rules for ~/.claude/CLAUDE.md
+├── settings.json             # Claude Code settings
+├── anthropic_key.sh          # API key helper template
+└── setup.sh                  # Installation script
+```
 
 ## License
 

@@ -1,6 +1,8 @@
 ## Claude Code Instructions
 
-This document defines **mandatory engineering standards** that Claude must follow when generating, modifying, or committing code in this repository. These rules apply **regardless of code size or complexity**.
+This document defines **mandatory engineering standards** that Claude must follow when generating, modifying, or committing code in any project. These rules are part of the **Claude Standard Environment** and apply **regardless of code size or complexity**.
+
+This file is installed globally to `~/.claude/CLAUDE.md` by the [Claude Standard Environment](https://github.com/RKInnovate/claude-standard-env) setup script.
 
 ---
 
@@ -152,7 +154,7 @@ This applies even to:
    * Do not suppress errors unless explicitly allowed  
    * Do not commit failing or flaky tests
 
-⚠️ **Never commit code that introduces breaking changes, fialeing tests, or lint violations.**
+⚠️ **Never commit code that introduces breaking changes, failing tests, or lint violations.**
 
 ---
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 #
-# Claude Skills Installation Script
+# Claude Standard Environment Installation Script
 #
-# This script installs Claude Code skills and settings from the claude-skills repository.
-# It can be run locally or remotely via curl:
+# This script installs the complete Claude Code development environment configuration
+# from the claude-standard-env repository. It can be run locally or remotely via curl:
 #
-#   curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-skills/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
 #
 # Features:
 # - Installs skills to ~/.claude/skills/
@@ -26,8 +26,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Repository information
-REPO_URL="https://github.com/RKInnovate/claude-skills.git"
-REPO_RAW_URL="https://raw.githubusercontent.com/RKInnovate/claude-skills/main"
+REPO_URL="https://github.com/RKInnovate/claude-standard-env.git"
+REPO_RAW_URL="https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main"
 BRANCH="main"
 
 # Target directories
@@ -56,7 +56,7 @@ print_error() {
 
 print_header() {
     echo -e "\n${BLUE}========================================${NC}"
-    echo -e "${BLUE}  Claude Code Skills Setup${NC}"
+    echo -e "${BLUE}  Claude Standard Environment Setup${NC}"
     echo -e "${BLUE}========================================${NC}\n"
 }
 
