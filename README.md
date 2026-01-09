@@ -27,6 +27,12 @@ cd claude-skills
 ./setup.sh
 ```
 
+**During installation**, you'll be prompted to enter your Anthropic API key. You can:
+- Enter your API key for immediate setup
+- Press Enter to skip and configure later
+
+Get your API key from: https://console.anthropic.com/settings/keys
+
 ## What Gets Installed
 
 - **Skills**: Installed to `~/.claude/skills/`
@@ -40,11 +46,23 @@ cd claude-skills
   - Enabled plugins (frontend-design, playwright)
   - Thinking mode settings
 
+- **Global CLAUDE.md**: Installed to `~/.claude/CLAUDE.md`
+  - Repository-agnostic guidance for Claude Code
+  - Package manager enforcement (uv for Python, pnpm for Node.js)
+  - Code documentation and quality standards
+
+- **API Key Helper**: Installed to `~/.claude/anthropic_key.sh` (only if not present)
+  - **Interactive setup**: Script prompts for your API key during installation
+  - Can skip and configure later by editing the file
+  - Preserves existing configuration if already set up
+  - Get your API key from: https://console.anthropic.com/settings/keys
+
 The installer will:
 - Create necessary directories if they don't exist
 - Replace existing skills if already present
 - Preserve other skills not in this repository
-- Backup existing settings.json before replacing
+- Backup existing settings.json and CLAUDE.md before replacing
+- Skip API key helper installation if already configured
 
 ## Skills Details
 

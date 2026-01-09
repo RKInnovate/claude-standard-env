@@ -189,6 +189,98 @@ install_settings() {
     print_success "Installed settings.json"
 }
 
+# Install anthropic_key.sh
+install_api_key_helper() {
+    print_info "Setting up API key helper..."
+
+    local api_key_source="$TEMP_DIR/anthropic_key.sh"
+    local api_key_target="$CLAUDE_DIR/anthropic_key.sh"
+
+    if [ ! -f "$api_key_source" ]; then
+        print_warning "anthropic_key.sh template not found in repository, skipping"
+        return
+    fi
+
+    if [ -f "$api_key_target" ]; then
+        print_info "API key helper already exists, skipping (preserving existing configuration)"
+        return
+    fi
+
+    # Prompt for API key
+    echo ""
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BLUE}  Anthropic API Key Setup${NC}"
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo "Enter your Anthropic API key to complete the setup."
+    echo "Get your API key from: https://console.anthropic.com/settings/keys"
+    echo ""
+    echo -e "${YELLOW}Note: Press Enter to skip and configure later${NC}"
+    echo ""
+
+    # Read API key with prompt
+    read -r -p "Anthropic API Key: " user_api_key
+    echo ""
+
+    if [ -n "$user_api_key" ]; then
+        # User provided an API key
+        # Create the file with the user's API key
+        cat > "$api_key_target" << 'EOF'
+#!/usr/bin/env bash
+
+#
+# Anthropic API Key Helper Script
+#
+# This script is called by Claude Code to retrieve your Anthropic API key.
+# Claude Code expects this script to output the API key to stdout.
+#
+
+EOF
+        echo "# API key configured during setup on $(date)" >> "$api_key_target"
+        echo "API_KEY=\"$user_api_key\"" >> "$api_key_target"
+        echo "" >> "$api_key_target"
+        echo "# Output the API key" >> "$api_key_target"
+        echo 'echo "$API_KEY"' >> "$api_key_target"
+
+        chmod +x "$api_key_target"
+        print_success "API key configured successfully!"
+    else
+        # User skipped, install template
+        cp "$api_key_source" "$api_key_target"
+        chmod +x "$api_key_target"
+        print_warning "Skipped API key setup. Edit ~/.claude/anthropic_key.sh to add your key later."
+        echo -e "${YELLOW}    Run: nano ~/.claude/anthropic_key.sh${NC}"
+    fi
+}
+
+# Install CLAUDE.md to ~/.claude/
+install_claude_md() {
+    print_info "Installing global CLAUDE.md..."
+
+    local claude_md_source="$TEMP_DIR/GLOBAL_CLAUDE.md"
+    local claude_md_target="$CLAUDE_DIR/CLAUDE.md"
+
+    if [ ! -f "$claude_md_source" ]; then
+        print_warning "GLOBAL_CLAUDE.md not found in repository, skipping"
+        return
+    fi
+
+    if [ -f "$claude_md_target" ]; then
+        # Backup existing CLAUDE.md
+        if ls "$claude_md_target.backup."* 1> /dev/null 2>&1; then
+            rm -f "$claude_md_target.backup."*
+            print_info "Removed old CLAUDE.md backup files"
+        fi
+
+        local backup_file="$claude_md_target.backup.$(date +%Y%m%d_%H%M%S)"
+        cp "$claude_md_target" "$backup_file"
+        print_info "Backed up existing CLAUDE.md to: $backup_file"
+    fi
+
+    cp "$claude_md_source" "$claude_md_target"
+    print_success "Installed CLAUDE.md"
+}
+
 # List installed skills
 list_installed_skills() {
     echo ""
@@ -231,14 +323,23 @@ main() {
     # Install settings
     install_settings
 
+    # Install API key helper
+    install_api_key_helper
+
+    # Install CLAUDE.md
+    install_claude_md
+
     # List installed skills
     list_installed_skills
 
     echo ""
     print_success "Installation completed successfully!"
     echo ""
-    print_info "Your Claude Code skills have been installed to: $SKILLS_DIR"
-    print_info "Your settings have been installed to: $CLAUDE_DIR/settings.json"
+    print_info "Installed files:"
+    print_info "  • Skills: $SKILLS_DIR"
+    print_info "  • Settings: $CLAUDE_DIR/settings.json"
+    print_info "  • Global CLAUDE.md: $CLAUDE_DIR/CLAUDE.md"
+    print_info "  • API key helper: $CLAUDE_DIR/anthropic_key.sh"
     echo ""
 }
 
