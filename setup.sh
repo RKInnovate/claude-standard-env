@@ -190,7 +190,7 @@ install_skills() {
     fi
 
     # List of skills in this repository
-    local skills=("architecture" "backend" "coding-guidelines" "frontend" "mantine-ui")
+    local skills=("architecture" "backend" "coding-guidelines" "frontend" "mantine-ui" "ux" "ux-diff" "ux-playwright" "ux-review")
     local installed_count=0
     local updated_count=0
 

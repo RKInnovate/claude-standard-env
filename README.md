@@ -11,6 +11,10 @@ This repository contains specialized skills that guide Claude's behavior when wr
 - **frontend**: Cupertino (Apple HIG) design system, three-panel layouts
 - **coding-guidelines**: Code quality, error handling, typing, state management
 - **mantine-ui**: Mantine UI component library reference with 120+ React components and hooks
+- **ux**: Core UX principles and responsibility-driven interface design
+- **ux-review**: Pre-output UX validation and self-review enforcement
+- **ux-diff**: UX intent vs implementation comparison and alignment
+- **ux-playwright**: UX rules encoded as Playwright test assertions
 
 ## Quick Install
 
@@ -45,6 +49,10 @@ Get your API key from: https://console.anthropic.com/settings/keys
   - `frontend/` - UI/UX design system and responsive layouts
   - `coding-guidelines/` - Code quality and best practices
   - `mantine-ui/` - Mantine UI component library reference (120+ components)
+  - `ux/` - Core UX principles and responsibility-driven design
+  - `ux-review/` - Pre-output UX validation enforcement
+  - `ux-diff/` - UX intent vs implementation comparison
+  - `ux-playwright/` - UX testing with Playwright assertions
 
 - **Settings**: Installed to `~/.claude/settings.json`
   - API key helper configuration
@@ -124,6 +132,49 @@ Comprehensive reference guide for the Mantine UI component library with 120+ Rea
 - Official documentation references and package installation guide
 - Support for forms, dates, notifications, charts, and more extensions
 
+### UX Skills
+
+A collection of four complementary skills that enforce UX best practices throughout the development lifecycle:
+
+#### UX (Core Principles)
+Establishes responsibility-driven interface design with strict separation of concerns.
+
+**Key principles:**
+- Every UI region has exactly one primary responsibility
+- Strict separation between navigation, primary work, and contextual details
+- Progressive disclosure (show only what's needed at current step)
+- Information density control with single focal points
+- Consistent mental models and interaction patterns
+- Mode and role awareness for UI behavior changes
+
+#### UX Review
+Forces mandatory self-review before generating any UI output to prevent regressions.
+
+**Key enforcement:**
+- Pre-output validation checklist (every region describable in one sentence)
+- Single primary workflow verification per screen
+- Blocks output if UX violations detected
+- No deferral of UX issues to "later refinement"
+
+#### UX Diff
+Compares intended UX with actual implementation to prevent silent UX drift.
+
+**Key validation:**
+- Verifies UI regions match intended responsibilities
+- Detects unauthorized feature relocations
+- Prevents implicit UX behavior changes
+- Ensures alignment between specs and implementation
+
+#### UX Playwright
+Encodes UX rules as automated Playwright test assertions.
+
+**Key testing:**
+- Visibility rules enforcement
+- Separation of concerns validation
+- Progressive disclosure verification
+- Role and mode-based UI behavior testing
+- Treats UX as a contract, not just styling
+
 ## Repository Standards
 
 The Claude Standard Environment enforces strict quality standards across all development work:
@@ -196,7 +247,11 @@ claude-standard-env/
 │   ├── backend/              # Backend services and APIs
 │   ├── frontend/             # UI/UX design system
 │   ├── coding-guidelines/    # Code quality standards
-│   └── mantine-ui/           # Mantine UI component library reference
+│   ├── mantine-ui/           # Mantine UI component library reference
+│   ├── ux/                   # Core UX principles
+│   ├── ux-review/            # UX validation enforcement
+│   ├── ux-diff/              # UX intent comparison
+│   └── ux-playwright/        # UX testing with Playwright
 ├── .github/
 │   └── workflows/            # CI/CD validation workflows
 ├── CLAUDE.md                 # Project-level Claude Code guidance
