@@ -4,19 +4,20 @@ The **single source of truth** for [Claude Code](https://claude.ai/code) develop
 
 ## Overview
 
-This repository contains four specialized skills that guide Claude's behavior when writing code:
+This repository contains specialized skills that guide Claude's behavior when writing code:
 
 - **architecture**: System architecture, cloud infrastructure (GCP), separation of concerns
 - **backend**: REST APIs, authentication, data modeling, security patterns
 - **frontend**: Cupertino (Apple HIG) design system, three-panel layouts
 - **coding-guidelines**: Code quality, error handling, typing, state management
+- **mantine-ui**: Mantine UI component library reference with 120+ React components and hooks
 
 ## Quick Install
 
-Install the complete Claude Standard Environment to your local Claude Code setup:
+Install the complete Claude Standard Environment with **interactive setup**:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh)"
 ```
 
 Or clone and run locally:
@@ -27,10 +28,12 @@ cd claude-standard-env
 ./setup.sh
 ```
 
-**During installation**:
-- The setup script will check if Claude Code CLI is installed
-- If not found, you'll be prompted to install it automatically
-- You'll be prompted to enter your Anthropic API key (or skip for later)
+### Interactive Installation Features
+
+The setup script provides an interactive experience:
+- **Claude CLI Check**: Automatically detects if Claude Code CLI is installed and offers to install it
+- **API Key Configuration**: Prompts for your Anthropic API key during setup (can skip and configure later)
+- **All Skills Installed**: Installs all available skills automatically
 
 Get your API key from: https://console.anthropic.com/settings/keys
 
@@ -41,6 +44,7 @@ Get your API key from: https://console.anthropic.com/settings/keys
   - `backend/` - Backend services, APIs, and data modeling
   - `frontend/` - UI/UX design system and responsive layouts
   - `coding-guidelines/` - Code quality and best practices
+  - `mantine-ui/` - Mantine UI component library reference (120+ components)
 
 - **Settings**: Installed to `~/.claude/settings.json`
   - API key helper configuration
@@ -107,6 +111,18 @@ Enforces production-grade coding practices, error handling, typing discipline, a
 - Comprehensive error handling
 - Unidirectional data flow
 - Production-ready code by default
+
+### Mantine UI
+
+Comprehensive reference guide for the Mantine UI component library with 120+ React components and 50+ hooks.
+
+**Key features:**
+- Complete component catalog organized by category
+- Import examples for all components
+- Detailed use cases for complex components (AppShell, Authentication, Forms, etc.)
+- Common UI patterns and responsive design guidelines
+- Official documentation references and package installation guide
+- Support for forms, dates, notifications, charts, and more extensions
 
 ## Repository Standards
 
@@ -179,7 +195,8 @@ claude-standard-env/
 │   ├── architecture/          # System architecture patterns
 │   ├── backend/              # Backend services and APIs
 │   ├── frontend/             # UI/UX design system
-│   └── coding-guidelines/    # Code quality standards
+│   ├── coding-guidelines/    # Code quality standards
+│   └── mantine-ui/           # Mantine UI component library reference
 ├── .github/
 │   └── workflows/            # CI/CD validation workflows
 ├── CLAUDE.md                 # Project-level Claude Code guidance

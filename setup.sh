@@ -6,11 +6,13 @@
 # This script installs the complete Claude Code development environment configuration
 # from the claude-standard-env repository. It can be run locally or remotely via curl:
 #
-#   curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh | bash
+#   bash -c "$(curl -fsSL https://raw.githubusercontent.com/RKInnovate/claude-standard-env/main/setup.sh)"
 #
 # Features:
+# - Interactive installation with prompts for Claude CLI and API key
 # - Checks if Claude Code CLI is installed (offers to install if missing)
-# - Installs skills to ~/.claude/skills/
+# - Prompts for Anthropic API key during setup (can skip for later)
+# - Installs all available skills to ~/.claude/skills/
 # - Replaces existing skills if already present
 # - Preserves other skills not in this repository
 # - Installs settings.json to ~/.claude/settings.json
@@ -188,7 +190,7 @@ install_skills() {
     fi
 
     # List of skills in this repository
-    local skills=("architecture" "backend" "coding-guidelines" "frontend")
+    local skills=("architecture" "backend" "coding-guidelines" "frontend" "mantine-ui")
     local installed_count=0
     local updated_count=0
 
