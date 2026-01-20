@@ -11,6 +11,7 @@ This repository contains specialized skills that guide Claude's behavior when wr
 - **frontend**: Cupertino (Apple HIG) design system, three-panel layouts
 - **coding-guidelines**: Code quality, error handling, typing, state management
 - **mantine-ui**: Mantine UI component library reference with 120+ React components and hooks
+- **project-planning**: Enforces PLAN.md and TODO.md for structured implementation tracking
 - **ux**: Core UX principles and responsibility-driven interface design
 - **ux-review**: Pre-output UX validation and self-review enforcement
 - **ux-diff**: UX intent vs implementation comparison and alignment
@@ -49,6 +50,7 @@ Get your API key from: https://console.anthropic.com/settings/keys
   - `frontend/` - UI/UX design system and responsive layouts
   - `coding-guidelines/` - Code quality and best practices
   - `mantine-ui/` - Mantine UI component library reference (120+ components)
+  - `project-planning/` - PLAN.md and TODO.md project management
   - `ux/` - Core UX principles and responsibility-driven design
   - `ux-review/` - Pre-output UX validation enforcement
   - `ux-diff/` - UX intent vs implementation comparison
@@ -131,6 +133,35 @@ Comprehensive reference guide for the Mantine UI component library with 120+ Rea
 - Common UI patterns and responsive design guidelines
 - Official documentation references and package installation guide
 - Support for forms, dates, notifications, charts, and more extensions
+
+### Project Planning
+
+Enforces structured project management through mandatory PLAN.md and TODO.md files for implementation tracking.
+
+**Key features:**
+- **PLAN.md**: Implementation roadmap with phases, tasks, testing, and dependencies
+- **TODO.md**: Granular task tracker with checkboxes and progress counts
+- Enforces incremental development with quality gates
+- Prevents implementation without planning
+- Tracks dependencies between phases
+- Ensures documentation and testing for every phase
+- Synchronization between planning files required
+
+**Structure enforced:**
+- Overview with implementation strategy and constraints
+- Phase-by-phase breakdown with specific tasks
+- Key files listing per phase
+- Testing verification steps
+- Progress tracking with task counts
+- Status monitoring (Not Started, In Progress, Completed, Blocked)
+- Documentation and commit tasks for every phase
+
+**Quality gates:**
+- Testing must pass before phase completion
+- Documentation required (DocStrings, comments)
+- Linting must pass
+- Conventional commits enforced
+- PR creation required
 
 ### UX Skills
 
@@ -248,6 +279,7 @@ claude-standard-env/
 │   ├── frontend/             # UI/UX design system
 │   ├── coding-guidelines/    # Code quality standards
 │   ├── mantine-ui/           # Mantine UI component library reference
+│   ├── project-planning/     # PLAN.md and TODO.md enforcement
 │   ├── ux/                   # Core UX principles
 │   ├── ux-review/            # UX validation enforcement
 │   ├── ux-diff/              # UX intent comparison
