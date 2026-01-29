@@ -208,12 +208,12 @@ install_skills() {
             rm -rf "$target_skill"
             cp -r "$source_skill" "$target_skill"
             print_success "Updated skill: $skill"
-            ((updated_count++))
+            updated_count=$((updated_count + 1))
         else
             # New skill installation
             cp -r "$source_skill" "$target_skill"
             print_success "Installed skill: $skill"
-            ((installed_count++))
+            installed_count=$((installed_count + 1))
         fi
     done
 
@@ -358,7 +358,7 @@ list_installed_skills() {
             if [ -d "$skill" ]; then
                 local skill_name=$(basename "$skill")
                 echo "  • $skill_name"
-                ((skills_found++))
+                skills_found=$((skills_found + 1))
             fi
         done
 
